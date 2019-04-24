@@ -14,7 +14,8 @@ class Node:
 
 class Linklist:#python中类名的首元素要大写    
 #初始化一个头指针
-    def __init__ (self,node=None):
+    def __init__ (self,name):
+        node=Node(name)
         self.head=node
     def is_empty (self):
         return self.head==None
@@ -37,7 +38,7 @@ class Graf:
     def shixian(self):
         Len=len(self.graf)
         for i in range(Len):
-            _linklist=Linklist()
+            _linklist=Linklist(key[i])
             _Len=len(self.graf[self.key[i]])
             for j in range(0,_Len):
                 _linklist.append(self.graf[self.key[i]][j])
