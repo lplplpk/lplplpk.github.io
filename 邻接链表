@@ -1,0 +1,48 @@
+#实现图的邻接链表
+
+import numpy as np
+import queue
+graf={'v0':['v1','v2'],'v1':['v2','v3'],'v3':'v4','v4':['v5','v6'],'v6':'v3'}
+#先从不带加权的开始
+#先写一个关于结点的类
+class Node:
+    def __init__ (self,name):
+        self.name=name
+        self.next=None
+        self.state='Unvisited'
+        self.rudu=0
+
+class Linklist:#python中类名的首元素要大写    
+#初始化一个头指针
+    def __init__ (self,node=None):
+        self.head=node
+    def is_empty (self):
+        return self.head==None
+    def append(self,data):
+        node=Node(data)
+        if (self.is_empty()):
+            self.head=node
+        else:
+            currunt=self.head
+            while currunt.next!=None:
+                currunt=currunt.next
+            currunt.next=node
+class Graf:
+    def __init__ (self,graf):
+        self.graf=graf
+        self.key=[]
+        for Key in graf:
+            self.key.append(Key)
+        self.linklist=[]
+    def shixian(self):
+        Len=len(self.graf)
+        for i in range(Len):
+            _linklist=Linklist()
+            _Len=len(self.graf[self.key[i]])
+            for j in range(0,_Len):
+                _linklist.append(self.graf[self.key[i]][j])
+            self.linklist.append(_linklist)
+                    
+     
+    
+                                    
