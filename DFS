@@ -1,0 +1,86 @@
+#DFS
+import numpy as np
+import queue
+graf={'v0':['v1','v2'],'v1':['v2','v3'],'v3':['v4'],'v4':['v5','v6'],'v6':['v3']}
+#先从不带加权的开始
+#先写一个关于结点的类
+class Node:
+    def __init__ (self,name):
+        self.name=name
+        self.next=None
+        self.state='Unvisited'
+        self.rudu=0
+
+class Linklist:#python中类名的首元素要大写    
+#初始化一个头指针
+    def __init__ (self,name):
+        node=Node(name)
+        self.head=node
+    def is_empty (self):
+        return self.head==None
+    def append(self,data):
+        node=Node(data)
+        if (self.is_empty()):
+            self.head=node
+        else:
+            currunt=self.head
+            while currunt.next!=None:
+                currunt=currunt.next
+            currunt.next=node
+class Graf:
+    def __init__ (self,graf):
+        self.graf=graf
+        self.key=[]
+        for Key in graf:
+            self.key.append(Key)
+        self.linklist_=[]
+        self.Len=len(self.graf)
+        
+    def shixian(self):
+        for i in range(self.Len):
+            _linklist=Linklist(self.key[i])
+            _Len=len(self.graf[self.key[i]])
+            for j in range(0,_Len):
+                _linklist.append(self.graf[self.key[i]][j])
+            self.linklist_.append(_linklist)
+                    
+    def BFS(self):
+        for i in range(self.Len):
+            p=self.linklist_[i].head
+            while p !=None:
+                print(p.name)
+                p=p.next
+                
+    def get_index(self,p):
+        for i in range(self.Len):
+            if p.name==self.key[i]:
+                return i
+        
+        
+    def visited(self,p):
+        while p.next!=None:
+            #出现了空的对象
+            if p.next.name in self.key and p.next.state=='Unvisited':
+                p=p.next
+                print (p.name)
+                p.state='Visited'
+                index=self.get_index(p)
+                self.visited(self.linklist_[index].head)
+            else:
+                p=p.next
+                                
+                
+  
+    def DFS(self):#从第一个开始
+    #DFS和BFS都只能访问一次
+        for i in range(self.Len):
+            p=self.linklist_[i].head
+            _Len=len(self.graf[self.key[i]])
+            if p.state=='Unvisited':
+                print(p.name)
+                p.state='Visited'
+                self.visited(p)
+                    
+                    
+            
+        
