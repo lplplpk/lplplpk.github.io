@@ -1,0 +1,14 @@
+#用邻接矩阵
+import numpy as np
+graf_={'v0':['v1','v2'],'v1':['v2','v3'],'v2':[],'v3':['v4'],'v4':['v5','v6'],'v5':[],'v6':['v3']}
+#生成一个图的邻接矩阵
+Key=graf_.keys()
+_Key=list(Key)
+print(_Key)
+Len=len(_Key)
+k=np.zeros((Len,Len))
+for i in range(Len):
+    for value in graf_[_Key[i]]:
+        index=_Key.index(value)
+        k[i][index]=1
+       
