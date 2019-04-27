@@ -1,0 +1,59 @@
+#kosaraju.用邻接矩阵
+import numpy as np
+import queue
+graf_={'v0':['v1','v2'],'v1':['v2','v3'],'v2':[],'v3':['v4'],'v4':['v5'],'v5':[],'v6':['v2','v3']}
+
+class Graf:
+    def __init__ (self):
+        Key=graf_.keys()
+        _Key=list(Key)
+        print(_Key)
+        self.Len=len(_Key)
+        self.k=np.zeros((self.Len,self.Len))
+        for i in range(self.Len):
+            for value in graf_[_Key[i]]:
+                index=_Key.index(value)
+                self.k[i][index]=1
+        print(self.k)
+        self.k_=self.k.T
+        self.q=[]
+        self.q_=[]
+        self.states=np.zeros((1,len(_Key)))
+        self.states_=np.zeros((1,len(_Key)))
+        self.key=_Key
+    
+    
+        
+#if a 符合要求 打印
+#if a 不符合要求，下一步
+                
+    def DFS_(self,index):
+        self.states[0][index]+=1
+        for i in range(self.Len):
+            if self.k[index][i]==1 and self.states[0][i]==0:
+                self.DFS_(i)
+        self.q.append(index)
+        print(self.q)
+    def DFS_2(self,index):
+        self.states[0][index]+=1
+        for i in range(self.Len):
+            if self.k_[index][i]==1 and self.states[0][i]==0:
+                self.DFS_2(i)
+        self.q_.append(index)
+    
+    def Scc(self):
+        for i in range(self.Len):
+            if self.states[0][i]==0:
+                print(i)
+                self.DFS_(i)
+        
+        
+        for i in self.q:
+            if self.states_[0][i]==0:
+                self.DFS_2(i)
+                while(len(self.q_)):
+                    print(self.q_.pop(_)
+                print('*')
+            
+          
+        
