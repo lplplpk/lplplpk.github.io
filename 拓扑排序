@@ -1,0 +1,107 @@
+#拓扑排序
+#用队列实现拓扑：从图中任意选取一个入度为零的点开始，将与其连接的点的入度减一，回到第一步
+#然后入度为零的点入队，最后打印
+#DFS
+import numpy as np
+import queue
+graf={'v1':['v8','v3'],'v2':['v3','v4','v5'],'v3':['v4'],'v4':['v6','v7'],'v5':['v6'],'v6':[],'v7':[],'v8':['v9'],'v9':['v7']}
+key=list(graf.keys())
+#先从不带加权的开始
+#先写一个关于结点的类
+class Node:
+    def __init__ (self,name):
+        self.name=name
+        self.next=[[],[],[],[],[],[],[],[],[]]
+        self.state='Unvisited'
+        self.rudu=0
+        self.into=[[],[],[],[],[],[],[],[],[]]
+class Node_list:
+    def __init__ (self,keys):
+        self.turn=[]
+        for i in range(len(keys)):
+            node=Node(keys[i])
+            self.turn.append(node)
+class Linklist:#python中类名的首元素要大写    
+#初始化一个头指针
+    def __init__ (self,name,keys,node__,i):
+        self.i=i
+        self.node_=node__
+        self.keys=keys
+        index=keys.index(name)
+        self.head=self.node_.turn[index]
+    def is_empty (self):
+        return self.head==None
+    def append(self,data):
+        node=self.node_.turn[self.keys.index(data)]
+        if (self.is_empty()):
+            self.head=node
+        else:
+            currunt=self.head
+            while currunt.next[self.i]!=[]:
+                p=currunt
+                currunt=currunt.next[self.i]
+            if currunt==self.head:
+                currunt.next[self.i]=node
+                currunt.next[self.i].into[self.i]=currunt
+            else:
+                currunt.next[self.i]=node
+                currunt.next[self.i].into[self.i]=p
+            
+class Graf:
+    def __init__ (self,graf):
+        self.graf=graf
+        self.key=[]
+        for Key in graf:
+            self.key.append(Key)
+        self.linklist_=[]
+        self.Len=len(self.key)
+        self.node__=Node_list(self.key)
+        
+    def shixian(self):
+        for i in range(self.Len):
+            _linklist=Linklist(self.key[i],self.key,self.node__,i)
+            _Len=len(self.graf[self.key[i]])
+            for j in range(0,_Len):
+                _linklist.append(self.graf[self.key[i]][j])
+            self.linklist_.append(_linklist)
+    def get_index(self,p):
+        for i in range(self.Len):
+            if p.name==self.key[i]:
+                return i
+    def get_edge(self):
+        k=[]
+        
+        for i in range (self.Len):
+            if [] in self.node__.turn[i].into:
+                k.append(self.Len-self.node__.turn[i].into.count([]))
+            else:
+                k.append(self.Len)
+        return k
+    def pro(self,k,i,q):
+        if k[i]==0:
+            q.put(self.node__.turn[i])
+            self.node__.turn[i].state='Visited'
+        else:
+            k[i]-=1
+         
+ 
+    def topological_sort(self):
+        
+        k=self.get_edge()
+        q = queue.Queue(maxsize=9)
+        for i in range(self.Len):
+            if k[i] ==0 and self.node__.turn[i].state=='Unvisited':
+                q.put(self.node__.turn[i])
+            
+        while(not q.empty()):
+            p=q.get()
+            print(p.name)
+            self.node__.turn[self.get_index(p)].state='Visited'
+            for i in range(self.Len):
+                if p.next[i]!=[]:
+                    p=p.next[i]
+                    
+                    self.pro(k,i,q)
+                else:
+                    break
+                        
