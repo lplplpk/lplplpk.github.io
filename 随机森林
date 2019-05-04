@@ -1,0 +1,213 @@
+import numpy as np
+import pandas as pd
+import random
+
+train_data = pd.read_csv('diabetes.csv')
+
+
+def bootstrapping(train_data):
+    k = train_data.sample(n=500, replace=True, weights=None, random_state=None, axis=0)
+    return k
+
+
+import numpy as np
+import pandas as pd
+import queue
+
+k = np.ones((5, 704))
+# df.loc[df.a>=2,'b'] = 'new_data'
+#print(train_data)
+# train_data.loc[train_data.Insulin==0,'Insulin']=train_data['Insulin'].mean()
+Train_data = train_data.iloc[0:500, :]
+Test_data = train_data.iloc[500:769]
+outcomes = np.zeros((train_data.shape[0], 1))
+outcomes_ = np.array(Test_data['Outcome'])
+
+
+class Node():
+    def __init__(self, data):
+        self.lchild = None
+        self.rchild = None
+        self.next = True
+        self.data = data
+        self.name = 0
+        self.mean = 0
+        # print(self.data['Outcome'].value_counts())
+        k = np.array(self.data['Outcome'].value_counts())[0] / self.data.shape[0]
+        Gini = 1 - (k * k) - (1 - k) * (1 - k)
+        self.Gini = Gini
+
+
+class Tree():
+    def __init__(self):
+        self.root = None  # 所有特征都是连续值所以依旧可以在后续划分中使用
+        self.features = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI',
+                         'DiabetesPedigreeFunction', 'Age']
+        self.len = len(self.features)
+
+    def creat_dataset(self, data, features_name):
+        mini = data[features_name].min()
+        max = data[features_name].max()
+        mean = (mini + max) / 2
+        data = data.sort_values(by=features_name)
+        data_1 = data[(data.eval(features_name)) <= mean]
+        data_2 = data[(data.eval(features_name)) > mean]
+        D = data.shape[0]
+        Dv_1 = data_1.shape[0]
+        Dv_2 = data_2.shape[0]
+        if len(data_1['Outcome'].value_counts()) != 0:
+            outcome_1 = np.array(data_1['Outcome'].value_counts())[0] / Dv_1
+        else:
+            return 100000, 10000, 100000, 10000
+        if len(data_2['Outcome'].value_counts()) != 0:
+
+            outcome_2 = np.array(data_2['Outcome'].value_counts())[0] / Dv_2
+        else:
+            return 10000, 10000, 100000, 10000
+
+        Gini_index = Dv_1 / (D) * (1 - outcome_1 ** 2 - (1 - outcome_1) ** 2) + Dv_2 / (D) * (
+                1 - outcome_2 ** 2 - (1 - outcome_2) ** 2)
+        return data_1, data_2, Gini_index, mean
+
+    def judge(self, node):
+        Gini_index = [100, 100, 100, 100, 100, 100, 100, 100]
+        D = node.data.shape[0]
+        # 实现属性的随机选取
+        l = random.sample(range(0, self.len), 4)
+        for i in l:
+
+            #print(i)
+            if len(node.data[self.features[i]].value_counts()) > 1:
+                (data_1, data_2, Gini, mean) = self.creat_dataset(node.data, self.features[i])
+                Gini_index[i] = Gini
+
+        index = Gini_index.index(np.min(Gini_index))
+
+        (data_1, data_2, m, mean) = self.creat_dataset(node.data, self.features[index])
+        node.name = self.features[index]
+        # print(node.name)hjj7
+        node.mean = mean
+        len_1 = data_1.shape[0]
+        len_2 = data_2.shape[0]
+        node.Gini = Gini_index[index]
+        return index, data_1, data_2, mean, node
+
+    def label(self, node):
+        if node.Gini == 0:
+            j = []
+            for i in range(0, 2):
+                if i in node.data['Outcome'].value_counts():
+                    j.append(i)
+            if j[0] == 1:
+                node.name = 'true'
+
+                #print('***')
+            else:
+                node.name = 'false'
+
+                #print('*')
+
+        elif node.data['Outcome'].value_counts()[0] < 0.5:
+            node.name = 'true'
+
+            #print('***')
+
+        else:
+
+            node.name = 'false'
+        node.next = None
+
+    def build(self, node):
+
+        if self.root == None:
+            self.root = node
+        if node.Gini <= 0.1 or node.data.shape[0] <= 8:
+            self.label(node)
+            return
+        (k, data_1, data_2, m, node) = self.judge(node)
+        node.name = self.features[k]
+        node.mean = m
+        # print(data_1.info())
+        node_1 = Node(data_1)
+        node_2 = Node(data_2)
+        node.lchild = node_1
+        node.rchild = node_2
+        self.build(node_1)
+        # print(data_2.info())
+
+        self.build(node_2)
+
+    def cut(self, data, node_1):
+        # print(node_1.name)
+        index1 = data[(data.eval(node_1.name)) <= node_1.mean].index.tolist()
+        index2 = data[(data.eval(node_1.name)) > node_1.mean].index.tolist()
+        data_1 = data.loc[index1, :]
+        data_2 = data.loc[index2, :]
+        # print(data_1)
+        # print(data_2)
+        return data_1, data_2, index1, index2
+
+    # 最好做到直接修改数据的Outcome
+    def apply(self, data, head, index):
+        if head == None:
+            return
+
+        if head.name == 'true':
+            outcomes[index] = 1
+            # print(data.info())
+            return
+        if head.name == 'false':
+            outcomes[index] = 0
+            # print(0)
+
+            return
+        (data_1, data_2, index_1, index_2) = self.cut(data, head)
+        lhead = head.lchild
+        rhead = head.rchild
+        # print(lhead.name)
+        # print(rhead.name)
+
+        self.apply(data_1, lhead, index_1)
+        self.apply(data_2, rhead, index_2)
+
+    def cross(self, outcomes_1, outcomes_2):
+        k = 0
+
+        for i in range(0, (train_data.shape[0] - Train_data.shape[0])):
+            if outcomes_1[i] == outcomes_2[i]:
+                k += 1
+        print(k / (Test_data.shape[0]))
+        return (k / (Test_data.shape[0]))
+
+
+tree = []
+outcomess = []
+
+for i in range(0, 20):
+    train_data_ = bootstrapping(train_data)
+
+    k = Tree()
+    k.build(Node(train_data_))
+    k.apply(Test_data, k.root, 0)
+    tree.append(k)
+    #print(outcomes[500:769])
+    # ll=np.array(outcomes[500:769,:]).reshape(1,268)
+    outcomess.append(np.array(outcomes[500:769, :].reshape(1, 268)))
+outcomess = np.array(outcomess).T
+final = np.zeros(Test_data.shape[0])
+
+for i in range(0, Test_data.shape[0]):
+    print(final)
+
+    k = outcomess[i].flatten()
+    print(k)
+    kk = pd.value_counts(k)
+    if len(kk) == 1:
+        final[i] = k[0]
+    elif kk[0] > kk[1]:
+        final[i] = 0
+    elif kk[0] < kk[1]:
+        final[i] = 1
+    else:
+        final[i]= random.randint(0,2)
+tree[0].cross(final, outcomes_)
