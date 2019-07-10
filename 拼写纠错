@@ -1,0 +1,50 @@
+mport numpy
+import re
+import collections as cl
+from operator import itemgetter
+a=open(r"C:\Users\liaa\Desktop\freinds.txt",'r')
+#print(a.readlines())
+k=str(a.read())
+dict=re.findall('[a-z]+',k.lower())
+print(dict)
+#统计词频
+a=cl.defaultdict(lambda :1)#拉普拉斯修正，即避免概率为零的情况
+for i in dict:
+    a[i]+=1
+print(a)
+keys=['i','s']
+#print(itemgetter(*keys)(a).max)
+#使用几步插入、替换、删除、交换的操作可以把一个词变为另外一个词，这几个步骤就叫作编辑距离
+vocab='asdfghjklqwertyuiopzxcvbnm'
+def change(words):
+    length=len(words)
+    #轮流删除
+    c1=[words[0:i]+words[i+1:] for i in range(length)]
+    #交换位置
+    c2=[words[0:i-1]+words[i+1]+words[i]+words[i+2:] for i in range(length-1)]
+    #替换一个字符
+    c3=[words[0:i]+c+words[i+1:] for i in range(length) for c in vocab]
+    #增加一个字母
+    c4=[words[0:i]+c+words[i:] for i in range(0,length+1) for c in vocab]
+    print('*')
+    print(c4)
+    return set(c1+c2+c3+c4)
+def step(steps,words):
+    f=words
+    for i in range(steps):
+        f=change(f)
+    return f
+def getwords(w):
+    return set(i for i in w if i in a )
+def correct(word):
+    c=getwords(word) and getwords(change(word))
+    print(getwords(change(word)))
+    print(c)
+    print(max(c,key=lambda i :a[i]))
+    return 0
+correct('richar')
+while 1:
+    k=input('please input')
+    print('do you want input this')
+    correct(k)
+
