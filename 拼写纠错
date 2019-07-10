@@ -1,4 +1,4 @@
-mport numpy
+import numpy
 import re
 import collections as cl
 from operator import itemgetter
