@@ -1,0 +1,41 @@
+re,collections,set
+from collections import namedtuple,Counter,deque,defaultdict,OrderedDict
+import re
+Circle=namedtuple('Circle',['x','y','r'])
+a=Circle(1,2,3)
+print(a.x)
+print(a.y)
+###########
+a='lplplpk'
+c=Counter()
+for i in a:
+    c[i]+=1
+print(c)
+###############
+a=deque(['a','c','b'])
+a.appendleft('j')
+a.popleft()
+print(a)
+############
+dd=defaultdict(lambda:'error')
+dd['key']=22
+print(dd['a'])
+##############
+k=OrderedDict()
+k['kk']=1
+k['pp']=2
+k['oo']=3
+print(k)
+###############
+a='hello'
+re.match('\w{2}',a)
+re.search('\w*',a)
+a='my English is very poor now,so i want to improve it'
+re.findall('very',a)
+re.split(r'[\s\,\;]+','a,  n,k  ;l')
+a=r'110-09071'
+m=re.match(r'(\d{3})-(\d{5})',a)
+m.group(2)
+
+
+
