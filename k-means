@@ -1,0 +1,64 @@
+import numpy as np
+import re
+import random
+import matplotlib as mpl
+from collections import namedtuple
+import matplotlib.pyplot as plt
+x=(np.random.rand(30))*4
+y=(np.random.rand(30))*5
+data=np.stack((x,y),axis=1)
+#print(vector)
+def cul_distance(v1,v2):
+    '''print(v1)
+    print(v2)
+    print(v1.dtype)'''
+    return np.sum(np.square(v1-v2))
+def cluster(data, vector):
+    v1,v2,v3,v4=[],[],[],[]
+    k={'v1':v1,'v2':v2,'v3':v3,'v4':v4}
+    for i in data:
+        distance={}
+        index=1
+        for j in vector:
+            distance[index]=cul_distance(i,j)
+            index+=1
+        eval('v'+str(max(distance,key=lambda x:-distance[x]))).append(list(i))
+    return k
+def get_new(k):
+    vector=[]
+    for i in range(4):
+        #print(i)
+        sum=0
+        p=np.zeros(np.array(k['v1'][0]).shape)
+        for j in k['v'+str(i+1)]:
+            sum+=np.sqrt(np.sum(np.square(np.array(j)-[0,0])))
+            p+=np.array(j)
+        print(sum)
+        vector.append(list((p/sum)))
+    return vector
+def train(data,epoch):
+    vector = random.sample(list(data), 4)
+    k=cluster(data,vector)
+    vector=get_new(k)
+    for i in range(epoch):
+        k=cluster(data,vector)
+        vector=get_new(k)
+    print(vector)
+    return  k
+def visualize(k):
+    #print(np.array((k['v1']).shape))
+    point=np.append(k['v1'],k['v2'])
+    point=(np.append(np.append(point,k['v4']),k['v3'])).reshape((-1,2))
+    print(point)
+    point=np.stack(point,axis=1)
+    print(point)
+    x,y=point[0],point[1]
+    target=np.append(np.append(np.append(np.ones(len(k['v1'])),np.ones(len(k['v2']))*2),np.ones(len(k['v3']))*3),np.ones(len(k['v4']))*4)
+    colormap2 = mpl.colors.ListedColormap(['r','g','b','y'])
+    plt.scatter(x,y,c=np.squeeze(target),cmap=colormap2)
+    plt.show()
+
+
+
+k=train(data,2)
+visualize(k)
