@@ -1,0 +1,9 @@
+import numpy as np
+#np.append 当axis=0时堆在上一个数组的下面，即按列堆叠
+a=np.array([[1,2,3],[3,4,5]])
+b=np.array([[5,6],[6,7]])
+#当axis=1时，堆在右边，即按行堆叠（axis=0则按axis=1连接，反之亦同）
+
+
+##append可以append list但是concatenate不可以
+###append如果不标明维度的话会变成一维的，且append两个数组不需要给两个数组加括号，但是concatenate需要
