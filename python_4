@@ -15,10 +15,20 @@ zhangsan'
 #replace
 a='hello world\n'
 a=a.replace(' ','').replace('\n','')
-#且split只能去掉头尾的空格无法去掉中间的空格，replace挺方便的
+#且strip只能去掉头尾的空格无法去掉中间的空格，replace挺方便的
 
 #split，只能对一个分隔符作用，但re可以作用多个分隔符
-a='
+a='ll aa'
+a.split()#对空格符
+b='ll,oo'
+a.split(',')
+
+#strip()可以去掉字符串头尾的指定字符
+a='qq,pp,ll,ll,'
+a.strip(',')
+#rstrip从右即字符串末尾删除,lstrip即从左侧删除
+
+
 
 
 
