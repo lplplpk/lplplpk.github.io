@@ -1,0 +1,27 @@
+#三引号与单引号的区别
+s='''list of name:
+lihua
+zhangsan'''
+s="""list of name:
+lihua
+zhangsan"""
+s='list of name:/
+lihua/
+zhangsan'
+#只有三个引号能做到打印三行
+##双引号与单引号的区别，如果字符串中有‘’则用双引号，如果字符串中有双引号则用单引号
+
+#txt文件read出来时string类型的但是如果直接用split函数就转为了list类型,所以可以在split之前对字符串进行处理
+#replace
+a='hello world\n'
+a=a.replace(' ','').replace('\n','')
+#且split只能去掉头尾的空格无法去掉中间的空格，replace挺方便的
+
+#split，只能对一个分隔符作用，但re可以作用多个分隔符
+a='
+
+
+
+
+
+
