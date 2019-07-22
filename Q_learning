@@ -1,0 +1,76 @@
+import numpy as np
+import pandas as pd
+
+decay_rate=0.9
+learning_rate=0.1
+epochs=100
+random_rate=0.1
+action=['left','right']
+state=np.linspace(1,6,6)
+sleep_time=0.2
+terminal=True
+start=True
+def Q_table(state,action):
+    return pd.DataFrame((np.zeros((len(state),len(action)))),index=state,columns=action)
+def chose_action(q_table,state):
+    if np.random.random()<random_rate or start==True :
+        print('*****')
+        return np.random.choice(action)
+    else:
+        return q_table.loc[state].argmax()
+def execute_action( action,state):
+    if action=='left':
+        if state!=1:
+            state-=1
+    else:
+        state+=1
+    return state
+def get_feedback(a):
+    if a=='right':
+        r=1
+    else:
+        r=-1
+    return r
+
+def create_env(epoch,counts,state):
+    global terminal
+    list=['-']*6+['T']
+    list[state - 1] = 'o'
+    if terminal:
+        print(''.join(list))
+        #time.sleep(sleep_time)
+    else :
+        print(''.join(list))
+        print('epoch:%d,cost:%d' % (epoch, counts))
+def rl(state,action,epoch):
+    global terminal,start,decay_rate,random_rate
+    q=Q_table(state,action)
+    print(q)
+    for i in range(epoch):
+        count=0
+        currunt=1
+        s=1
+        while terminal:
+
+            a=chose_action(q,s)
+            s=execute_action(a,s)
+            reward=get_feedback(a)
+            #print(currunt)
+            k=q[a].loc[currunt]
+            q[a].loc[currunt]+=learning_rate*(reward+decay_rate*(max(q.loc[s]))- k)
+            if s==6:
+                 terminal=False
+            currunt=s
+            count+=1
+            create_env(i, count, s)
+
+        print(q)
+        terminal=True
+        start=False
+
+    return q
+
+Q=rl(state,action,epochs)
+
+
+#!!!记住l.iloc[0]=l.loc[1],并且涉及到随机的函数应该直接传它的运行结果，而不是通过再一次调用得到结果（下一次调用产生的结果就不一样了）
