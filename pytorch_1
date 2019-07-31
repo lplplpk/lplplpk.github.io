@@ -39,4 +39,18 @@ out=z.mean()
 out.backward()
 print(x.data)
 print(y.grad)
-'''
+
+import torch
+from torch.autograd import Variable
+t1=torch.Tensor([1,2,3])
+a=Variable(t1,requires_grad=True)
+t2=torch.Tensor([2,3,4])
+b=Variable(t2,requires_grad=True)
+#所以什么呢，.backward不带参数时c必须是一维的标量，否则应当给出参数
+c=a+b
+k=c*4
+print(k)
+#c_=c.detach()
+k.backward(torch.Tensor([1,2,3]))
+#print(a.grad_fn)
+#print(c.grad_fn)
