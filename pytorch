@@ -3,7 +3,7 @@ k=Tensor.gather(dim=0,index[i][j][k])
 则 k=Tensor[index[i][j][k]][j][k]
 以此类推，可以用在one-hot输出分类问题
 2.detatch()
-将Variable从网络中返回，不参与梯度求导，返回的得到的该值也不参与求导
+将Variable从网络中返回，反回的值永远不需要梯度
 import torch
 from torch.nn import init
 from torch.autograd import Variable
@@ -15,3 +15,27 @@ v3 = v1 + v2
 v3_detached = v3.detach()
 v3_detached.data.add_(t1) # 修改了 v3_detached Variable中 tensor 的值
 print(v3, v3_detached)    # v3 中tensor 的值也会改变
+# y=A(x), z=B(y) 求B中参数的梯度，不求A中参数的梯度
+# 第一种方法
+y = A(x)
+z = B(y.detach())
+z.backward()
+
+# 第二种方法
+y = A(x)
+y.detach_()
+z = B(y)
+z.backward()
+
+
+
+####torch.optim.optimizer()
+optimizer=torch.optim.Adam(param_dict,lr)
+#loss.backward()之后
+optimizer.zero_grad()
+optimizer.step()
+
+
+###state_dict
+torch.save(model.state_dict(),path)
+torch.load_state_dict(model.state_dict()/torch.load(path)
