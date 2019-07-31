@@ -1,0 +1,17 @@
+'''1.gather函数,Tensor.gather(dim,index)
+k=Tensor.gather(dim=0,index[i][j][k])
+则 k=Tensor[index[i][j][k]][j][k]
+以此类推，可以用在one-hot输出分类问题
+2.detatch()
+将Variable从网络中返回，不参与梯度求导，返回的得到的该值也不参与求导
+import torch
+from torch.nn import init
+from torch.autograd import Variable
+t1 = torch.FloatTensor([1., 2.])
+v1 = Variable(t1)
+t2 = torch.FloatTensor([2., 3.])
+v2 = Variable(t2)
+v3 = v1 + v2
+v3_detached = v3.detach()
+v3_detached.data.add_(t1) # 修改了 v3_detached Variable中 tensor 的值
+print(v3, v3_detached)    # v3 中tensor 的值也会改变
